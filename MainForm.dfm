@@ -1,10 +1,12 @@
 object Form1: TForm1
   Left = 660
   Top = 0
+  Anchors = [akLeft, akTop, akRight, akBottom]
+  AutoSize = True
   Caption = 'SImulationsprojekt - Tobias Zimmermann'
-  ClientHeight = 717
-  ClientWidth = 1400
-  Color = clBtnFace
+  ClientHeight = 790
+  ClientWidth = 1289
+  Color = clWindow
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -17,7 +19,7 @@ object Form1: TForm1
   object KassenChart: TJvChart
     Left = 271
     Top = 28
-    Width = 618
+    Width = 1018
     Height = 300
     Options.PenLegends.Strings = (
       'Kunden in Warteschlange')
@@ -57,7 +59,7 @@ object Form1: TForm1
     Options.AxisFont.Name = 'Tahoma'
     Options.AxisFont.Style = []
     Options.DivisionLineColor = clTeal
-    Options.PaperColor = clCream
+    Options.PaperColor = clWindow
     Options.AxisLineColor = clBlack
     Options.CursorColor = clBlack
     Options.CursorStyle = psSolid
@@ -66,20 +68,28 @@ object Form1: TForm1
     Left = 271
     Top = 359
     Width = 498
-    Height = 296
+    Height = 431
     AutoSize = True
+    Options.PenLegends.Strings = (
+      'Durchschnittliche Wartezeit gesamt'
+      'Durchschnittliche Wartezeit Stundenweise')
     Options.Title = 'Wartezeit im Durchschnitt'
+    Options.NoDataMessage = 'keine Daten'
+    Options.YAxisHeader = 'Wartezeit in Sekunden'
     Options.XAxisValuesPerDivision = 0
     Options.XAxisLabelAlignment = taLeftJustify
     Options.XAxisDateTimeMode = False
+    Options.XAxisHeader = 'Zeit in Minuten'
     Options.PenCount = 2
     Options.XOrigin = 0
     Options.YOrigin = 0
+    Options.YStartOffset = 42
     Options.PrimaryYAxis.YMax = 10.000000000000000000
     Options.PrimaryYAxis.YLegendDecimalPlaces = 0
     Options.SecondaryYAxis.YMax = 10.000000000000000000
     Options.SecondaryYAxis.YLegendDecimalPlaces = 0
     Options.MouseDragObjects = False
+    Options.Legend = clChartLegendBelow
     Options.LegendRowCount = 0
     Options.AxisLineWidth = 3
     Options.HeaderFont.Charset = DEFAULT_CHARSET
@@ -116,8 +126,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object UhrzeitLabel: TLabel
-    Left = 1107
-    Top = 166
+    Left = 164
+    Top = 566
     Width = 60
     Height = 29
     Caption = '08:00'
@@ -129,10 +139,11 @@ object Form1: TForm1
     ParentFont = False
   end
   object KassierteKundenLabel: TLabel
-    Left = 1152
-    Top = 40
+    Left = 215
+    Top = 442
     Width = 9
     Height = 19
+    Alignment = taRightJustify
     Caption = '0'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -142,8 +153,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object KassierteKundenTextLabel: TLabel
-    Left = 1014
-    Top = 40
+    Left = 29
+    Top = 442
     Width = 126
     Height = 19
     Caption = 'Kassierte Kunden:'
@@ -155,8 +166,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object LaengsteWartezeitTextLabel: TLabel
-    Left = 1010
-    Top = 67
+    Left = 29
+    Top = 467
     Width = 130
     Height = 19
     Caption = 'L'#228'ngste Wartezeit:'
@@ -168,10 +179,11 @@ object Form1: TForm1
     ParentFont = False
   end
   object LaengsteWartezeitLabel: TLabel
-    Left = 1152
-    Top = 67
+    Left = 215
+    Top = 469
     Width = 9
     Height = 19
+    Alignment = taRightJustify
     Caption = '0'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -207,10 +219,11 @@ object Form1: TForm1
     ParentFont = False
   end
   object KundenImMarktLabel: TLabel
-    Left = 1152
-    Top = 92
+    Left = 990
+    Top = 334
     Width = 9
     Height = 19
+    Alignment = taRightJustify
     Caption = '0'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -220,11 +233,11 @@ object Form1: TForm1
     ParentFont = False
   end
   object KundenImMarktText: TLabel
-    Left = 988
-    Top = 92
-    Width = 152
+    Left = 837
+    Top = 334
+    Width = 147
     Height = 19
-    Caption = 'Kunden im Gesch'#228'fft:'
+    Caption = 'Kunden im Gesch'#228'ft:'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16
@@ -246,8 +259,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object UhrzeitText: TLabel
-    Left = 1018
-    Top = 166
+    Left = 29
+    Top = 566
     Width = 83
     Height = 29
     Caption = 'Uhrzeit:'
@@ -262,12 +275,17 @@ object Form1: TForm1
     Left = 791
     Top = 355
     Width = 498
-    Height = 300
+    Height = 435
     AutoSize = True
+    Options.PenLegends.Strings = (
+      'Kunden')
     Options.Title = 'Anzahl der Kunden im Markt'
+    Options.NoDataMessage = 'keine Daten'
+    Options.YAxisHeader = 'Anzahl Kunden'
     Options.XAxisValuesPerDivision = 0
     Options.XAxisLabelAlignment = taLeftJustify
     Options.XAxisDateTimeMode = False
+    Options.XAxisHeader = 'Zeit in Minuten'
     Options.XOrigin = 0
     Options.YOrigin = 0
     Options.PrimaryYAxis.YMax = 10.000000000000000000
@@ -275,6 +293,7 @@ object Form1: TForm1
     Options.SecondaryYAxis.YMax = 10.000000000000000000
     Options.SecondaryYAxis.YLegendDecimalPlaces = 0
     Options.MouseDragObjects = False
+    Options.Legend = clChartLegendBelow
     Options.LegendRowCount = 0
     Options.AxisLineWidth = 3
     Options.HeaderFont.Charset = DEFAULT_CHARSET
@@ -298,8 +317,8 @@ object Form1: TForm1
     Options.CursorStyle = psSolid
   end
   object TageText: TLabel
-    Left = 1053
-    Top = 131
+    Left = 29
+    Top = 531
     Width = 48
     Height = 29
     Caption = 'Tag:'
@@ -311,11 +330,12 @@ object Form1: TForm1
     ParentFont = False
   end
   object TageLabel: TLabel
-    Left = 1154
-    Top = 131
+    Left = 211
+    Top = 531
     Width = 13
     Height = 29
-    Caption = '0'
+    Alignment = taRightJustify
+    Caption = '1'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -24

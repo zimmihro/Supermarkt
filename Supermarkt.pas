@@ -8,29 +8,31 @@ uses System.SysUtils, System.Variants,
 type
 
   TSupermarkt = class
-    private
-      FSortiment                : TSortiment;
-      FKassenSystem             : TKassenSystem;
-      FKundenVerwalter          : TKundenVerwalter;
-      FUhrzeit                  : integer;
-      FIstGeoeffnet             : boolean;
-      function getWarteschlangenVolumen(): TList<TWarteschlangenVolumen>;
-      procedure KundenAnKassensystemUebergeben();
-      procedure SupermarktSchliessen();
-      procedure SupermarktOeffnen();
-      procedure UhrzeitAktualisieren();
-      function getUhrzeit(): string;
-    public
-      property Sortiment                : TSortiment read FSortiment write FSortiment;
-      property Kassensystem             : TKassenSystem read FKassenSystem write FKassenSystem;
-      property Kundenverwalter          : TKundenVerwalter read FKundenVerwalter write FKundenVerwalter;
-      property SchlangenVolumen         : TList<TWarteschlangenVolumen> read getWarteschlangenVolumen;
-      property Uhrzeit                  : integer read FUhrzeit write FUhrzeit;
-      property UhrzeitString            : string read getUhrzeit;
-      property IstGeoeffnet             : boolean read FIstGeoeffnet write FIstGeoeffnet;
-      constructor create(KassenParameter: TKassenParameter; KundenParameter: TKundenParameter;
-        SortimentParameter: TSortimentParameter; KleingeldParameter: TKleingeldParameter);
-      procedure TimerEvent();
+  private
+    FSortiment      : TSortiment;
+    FKassenSystem   : TKassenSystem;
+    FKundenVerwalter: TKundenVerwalter;
+    FUhrzeit        : integer;
+    FTag            : integer;
+    FIstGeoeffnet   : boolean;
+    function getWarteschlangenVolumen(): TList<TWarteschlangenVolumen>;
+    procedure KundenAnKassensystemUebergeben();
+    procedure SupermarktSchliessen();
+    procedure SupermarktOeffnen();
+    procedure UhrzeitAktualisieren();
+    function getUhrzeit(): string;
+  public
+    constructor create(KassenParameter: TKassenParameter; KundenParameter: TKundenParameter;
+      SortimentParameter: TSortimentParameter; KleingeldParameter: TKleingeldParameter);
+    property Sortiment: TSortiment read FSortiment write FSortiment;
+    property Kassensystem: TKassenSystem read FKassenSystem write FKassenSystem;
+    property Kundenverwalter: TKundenVerwalter read FKundenVerwalter write FKundenVerwalter;
+    property SchlangenVolumen: TList<TWarteschlangenVolumen> read getWarteschlangenVolumen;
+    property Uhrzeit: integer read FUhrzeit write FUhrzeit;
+    property Tag: integer read FTag write FTag;
+    property UhrzeitString: string read getUhrzeit;
+    property IstGeoeffnet: boolean read FIstGeoeffnet write FIstGeoeffnet;
+    procedure TimerEvent();
   end;
 
 implementation
@@ -40,11 +42,12 @@ implementation
 constructor TSupermarkt.create(KassenParameter: TKassenParameter; KundenParameter: TKundenParameter;
   SortimentParameter: TSortimentParameter; KleingeldParameter: TKleingeldParameter);
 begin
-  self.Sortiment := TSortiment.create(SortimentParameter);
-  self.Kassensystem := TKassenSystem.create(KassenParameter, KleingeldParameter);
+  self.Sortiment       := TSortiment.create(SortimentParameter);
+  self.Kassensystem    := TKassenSystem.create(KassenParameter, KleingeldParameter);
   self.Kundenverwalter := TKundenVerwalter.create(KundenParameter, self.Sortiment);
-  self.IstGeoeffnet := true;
-  self.Uhrzeit := 8 * 60;
+  self.IstGeoeffnet    := true;
+  self.Uhrzeit         := 8 * 60;
+  self.Tag             := 1;
 end;
 
 function TSupermarkt.getUhrzeit: string;
@@ -59,12 +62,12 @@ begin
     stundenString := '0' + stunden.ToString()
   else
     stundenString := stunden.ToString();
-  minuten := self.Uhrzeit.ToExtended - (stunden * 60);
+  minuten         := self.Uhrzeit.ToExtended - (stunden * 60);
   if minuten < 10 then
     minutenString := '0' + minuten.ToString()
   else
     minutenString := minuten.ToString();
-  Result := stundenString + ':' + minutenString;
+  Result          := stundenString + ':' + minutenString;
 end;
 
 function TSupermarkt.getWarteschlangenVolumen: TList<TWarteschlangenVolumen>;
@@ -74,11 +77,11 @@ var
   i           : integer;
 begin
   VolumenListe := TList<TWarteschlangenVolumen>.create;
-  for i := 0 to self.Kassensystem.WarteschlangenListe.Count - 1 do
+  for i        := 0 to self.Kassensystem.WarteschlangenListe.Count - 1 do
   begin
-    Volumen.ArtikelVolumen := self.Kassensystem.WarteschlangenListe[i].ArtikelVolumen;
+    Volumen.ArtikelVolumen  := self.Kassensystem.WarteschlangenListe[i].ArtikelVolumen;
     Volumen.SchlangenNummer := i;
-    Volumen.SchlangeOffen := self.Kassensystem.WarteschlangenListe[i].IstGeoeffnet;
+    Volumen.SchlangeOffen   := self.Kassensystem.WarteschlangenListe[i].IstGeoeffnet;
     VolumenListe.Add(Volumen);
   end;
   Result := VolumenListe;
@@ -97,10 +100,12 @@ begin
       begin
         if self.Kundenverwalter.KundenListe[i].Kundenstatus = ksBereitZumZahlen then
         begin
-          wunschkasse := self.Kundenverwalter.KundenListe[i].WarteschlangeWaehlen(self.SchlangenVolumen);
+          wunschkasse := self.Kundenverwalter.KundenListe[i].WarteschlangeWaehlen
+            (self.SchlangenVolumen);
           if wunschkasse <= (self.Kassensystem.WarteschlangenListe.Count - 1) then
           begin
-            self.Kassensystem.WarteschlangenListe[wunschkasse].KundenListe.Add(self.Kundenverwalter.KundenListe[i]);
+            self.Kassensystem.WarteschlangenListe[wunschkasse].KundenListe.Add
+              (self.Kundenverwalter.KundenListe[i]);
             self.Kundenverwalter.KundenListe[i].Kundenstatus := ksInWarteschlange;
           end;
         end;
@@ -137,7 +142,10 @@ begin
   if self.Uhrzeit = (20 * 60) then
     self.SupermarktSchliessen;
   if (self.Uhrzeit > (20 * 60)) and (self.Kundenverwalter.KundenListe.Count = 0) then
+    begin
     self.Uhrzeit := 7 * 60;
+    self.Tag := self.Tag + 1;
+    end;
   if self.Uhrzeit = (8 * 60) then
     self.SupermarktOeffnen;
 end;

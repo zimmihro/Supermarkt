@@ -11,115 +11,136 @@ const
 type
 
   TWarenkorb = class
-    private
-      FArtikelListe: TList<TArtikel>;
-      function getArtikelWert(): double;
-      function getArtikelAnzahl(): integer;
-    public
-      constructor create();
-      property ArtikelListe: TList<TArtikel> read FArtikelListe write FArtikelListe;
-      property ArtikelAnzahl: integer read getArtikelAnzahl;
-      property Wert: double read getArtikelWert;
-      procedure ArtikelHinzufuegen(Artikel: TArtikel);
-      // procedure ArtikelEntfernen;
+  private
+    FArtikelListe: TList<TArtikel>;
+    function getArtikelWert(): double;
+    function getArtikelAnzahl(): integer;
+  public
+    constructor create();
+    property ArtikelListe: TList<TArtikel> read FArtikelListe
+      write FArtikelListe;
+    property ArtikelAnzahl: integer read getArtikelAnzahl;
+    property Wert: double read getArtikelWert;
+    procedure ArtikelHinzufuegen(Artikel: TArtikel);
+    // procedure ArtikelEntfernen;
   end;
 
   TKunde = class
-    private
-      FAlter                : integer;
-      FKundenstatus         : TKundenStatus;
-      FTimerAussetzenCounter: integer;
-      FBargeld              : double;
-      FSortiment            : TSortiment;
-      FWarenkorb            : TWarenkorb;
-      FDauerAufenthalt      : integer;
-      FDauerWarteschlange   : integer;
-      function WarteschlangenBeurteilen(Warteschlangen: TList<TWarteschlangenVolumen>): TList<TWarteschlangenVolumen>;
-    public
-      constructor create(Alter: integer; Bargeld: double; Sortiment: TSortiment);
-      property Alter: integer read FAlter write FAlter;
-      property Kundenstatus: TKundenStatus read FKundenstatus write FKundenstatus;
-      property TimerAussetzenCounter: integer read FTimerAussetzenCounter write FTimerAussetzenCounter;
-      property Bargeld: double read FBargeld write FBargeld;
-      property Sortiment: TSortiment read FSortiment write FSortiment;
-      property Warenkorb: TWarenkorb read FWarenkorb write FWarenkorb;
-      property DauerAufenthalt: integer read FDauerAufenthalt write FDauerAufenthalt;
-      property DauerWarteschlange: integer read FDauerWarteschlange write FDauerWarteschlange;
-      procedure ArtikelEinpacken();
-      procedure TimerEvent();
-      procedure ArtikelEntfernen();
-      function WarteschlangeWaehlen(Warteschlangen: TList<TWarteschlangenVolumen>): integer;
-      function Bezahlen(Betrag: double; KleingeldParameter: TKleingeldParameter): boolean;
+  private
+    FAlter                : integer;
+    FKundenstatus         : TKundenStatus;
+    FTimerAussetzenCounter: integer;
+    FBargeld              : double;
+    FSortiment            : TSortiment;
+    FWarenkorb            : TWarenkorb;
+    FDauerAufenthalt      : integer;
+    FDauerWarteschlange   : integer;
+    function WarteschlangenBeurteilen(Warteschlangen
+      : TList<TWarteschlangenVolumen>): TList<TWarteschlangenVolumen>;
+  public
+    constructor create(Alter: integer; Bargeld: double; Sortiment: TSortiment);
+    property Alter: integer read FAlter write FAlter;
+    property Kundenstatus: TKundenStatus read FKundenstatus write FKundenstatus;
+    property TimerAussetzenCounter: integer read FTimerAussetzenCounter
+      write FTimerAussetzenCounter;
+    property Bargeld: double read FBargeld write FBargeld;
+    property Sortiment: TSortiment read FSortiment write FSortiment;
+    property Warenkorb: TWarenkorb read FWarenkorb write FWarenkorb;
+    property DauerAufenthalt: integer read FDauerAufenthalt
+      write FDauerAufenthalt;
+    property DauerWarteschlange: integer read FDauerWarteschlange
+      write FDauerWarteschlange;
+    procedure ArtikelEinpacken();
+    procedure TimerEvent();
+    procedure ArtikelEntfernen();
+    function WarteschlangeWaehlen(Warteschlangen
+      : TList<TWarteschlangenVolumen>): integer;
+    function Bezahlen(Betrag: double;
+      KleingeldParameter: TKleingeldParameter): boolean;
   end;
 
   TKundenVerwalter = class
-    private
-      FKundenVerwalterStatus    : TKundenVerwalterStatus;
-      FKundenListe              : TList<TKunde>;
-      FKundenFrequenz           : integer;
-      FKundenKapazitaet         : integer;
-      FFlashmobQuote            : integer;
-      FFlashmobTimer            : integer;
-      FSortiment                : TSortiment;
-      FMinAlter                 : integer;
-      FMaxAlter                 : integer;
-      FMinBargeld               : integer;
-      FMaxBargeld               : integer;
-      FEntfernteKunden          : double;
-      FKuerzesteWartezeit       : double;
-      FLaengsteWartezeit        : double;
-      FWartezeitGesamt          : double;
-      FAufenthaltGesamt         : double;
-      FMaxWartezeitDurchschnitt : double;
-      FWartezeitenNachStunden   : TList<double>;
-      FWartezeitenAktuelleStunde: TList<double>;
-      FTimerCounter             : integer;
-      procedure AufenthaltMessen();
-      procedure KassierteKundenEntfernen();
-      procedure MaxWartezeitDurchschnittAktualisieren();
-      procedure FlashMobStarten();
-      procedure FlashMob();
-      procedure WartezeitenErfassen();
-      procedure WartezeitenStundenMittelErfassen();
-      procedure TimerHochsetzen();
-      function getKundenAnzahl(): integer;
-      function getEinpackendeKunden(): integer;
-      function getWartendeKunden(): integer;
-      function getWartezeitDurchschnitt(): double;
-      function getAufenthaltDurchschnitt(): double;
-      function getWartezeitDurchschnittString: string;
-    public
-      constructor create(Parameter: TKundenParameter; Sortiment: TSortiment);
-      property Kundenverwalterstatus: TKundenVerwalterStatus read FKundenVerwalterStatus write FKundenVerwalterStatus;
-      property KundenListe: TList<TKunde> read FKundenListe write FKundenListe;
-      property KundenFrequenz: integer read FKundenFrequenz write FKundenFrequenz;
-      property KundenKapazitaet: integer read FKundenKapazitaet write FKundenKapazitaet;
-      property FlashmobQuote: integer read FFlashmobQuote write FFlashmobQuote;
-      property FlashMobTimer: integer read FFlashmobTimer write FFlashmobTimer;
-      property KundenAnzahl: integer read getKundenAnzahl;
-      property KundenBeimEinpacken: integer read getEinpackendeKunden;
-      property KundenBeimWarten: integer read getWartendeKunden;
-      property Sortiment: TSortiment read FSortiment write FSortiment;
-      property MinAlter: integer read FMinAlter write FMinAlter;
-      property MaxAlter: integer read FMaxAlter write FMaxAlter;
-      property MinBargeld: integer read FMinBargeld write FMinBargeld;
-      property MaxBargeld: integer read FMaxBargeld write FMaxBargeld;
-      property EntfernteKunden: double read FEntfernteKunden write FEntfernteKunden;
-      property WartezeitGesamt: double read FWartezeitGesamt write FWartezeitGesamt;
-      property AufenthaltGesamt: double read FAufenthaltGesamt write FAufenthaltGesamt;
-      property LaengsteWartezeit: double read FLaengsteWartezeit write FLaengsteWartezeit;
-      property KuerzesteWartezeit: double read FKuerzesteWartezeit write FKuerzesteWartezeit;
-      property Wartezeitdurchschnitt: double read getWartezeitDurchschnitt;
-      property WartezeitdurchschnittString: string read getWartezeitDurchschnittString;
-      property MaxWartezeitDurchschnitt: double read FMaxWartezeitDurchschnitt write FMaxWartezeitDurchschnitt;
-      property AufenthaltDurchschnitt: double read getAufenthaltDurchschnitt;
-      property WarteZeitenNachStunden: TList<double> read FWartezeitenNachStunden write FWartezeitenNachStunden;
-      property WartezeitenAktuelleStunde: TList<double> read FWartezeitenAktuelleStunde
-        write FWartezeitenAktuelleStunde;
-      property TimerCounter: integer read FTimerCounter write FTimerCounter;
-      procedure KundeErstellen(); overload;
-      procedure KundeErstellen(Limit: integer); overload;
-      procedure TimerEvent(supermarktOffen: boolean);
+  private
+    FKundenVerwalterStatus          : TKundenVerwalterStatus;
+    FKundenListe                    : TList<TKunde>;
+    FKundenFrequenz                 : integer;
+    FKundenKapazitaet               : integer;
+    FFlashmobQuote                  : integer;
+    FFlashmobTimer                  : integer;
+    FSortiment                      : TSortiment;
+    FMinAlter                       : integer;
+    FMaxAlter                       : integer;
+    FMinBargeld                     : integer;
+    FMaxBargeld                     : integer;
+    FEntfernteKunden                : double;
+    FKuerzesteWartezeit             : double;
+    FLaengsteWartezeit              : double;
+    FWartezeitGesamt                : double;
+    FAufenthaltGesamt               : double;
+    FMaxWartezeitDurchschnitt       : double;
+    FMaxWartezeitStundenDurchschnitt: double;
+    FWartezeitenNachStunden         : TList<double>;
+    FWartezeitenAktuelleStunde      : TList<double>;
+    FTimerCounter                   : integer;
+    procedure AufenthaltMessen();
+    procedure KassierteKundenEntfernen();
+    procedure MaxWartezeitDurchschnittAktualisieren();
+    procedure FlashMobStarten();
+    procedure FlashMob();
+    procedure WartezeitenErfassen();
+    procedure WartezeitenStundenMittelErfassen();
+    procedure TimerHochsetzen();
+    function getKundenAnzahl(): integer;
+    function getEinpackendeKunden(): integer;
+    function getWartendeKunden(): integer;
+    function getWartezeitDurchschnitt(): double;
+    function getAufenthaltDurchschnitt(): double;
+    function getWartezeitDurchschnittString: string;
+  public
+    constructor create(Parameter: TKundenParameter; Sortiment: TSortiment);
+    property Kundenverwalterstatus: TKundenVerwalterStatus
+      read FKundenVerwalterStatus write FKundenVerwalterStatus;
+    property KundenListe: TList<TKunde> read FKundenListe write FKundenListe;
+    property KundenFrequenz: integer read FKundenFrequenz write FKundenFrequenz;
+    property KundenKapazitaet: integer read FKundenKapazitaet
+      write FKundenKapazitaet;
+    property FlashmobQuote: integer read FFlashmobQuote write FFlashmobQuote;
+    property FlashMobTimer: integer read FFlashmobTimer write FFlashmobTimer;
+    property KundenAnzahl: integer read getKundenAnzahl;
+    property KundenBeimEinpacken: integer read getEinpackendeKunden;
+    property KundenBeimWarten: integer read getWartendeKunden;
+    property Sortiment: TSortiment read FSortiment write FSortiment;
+    property MinAlter: integer read FMinAlter write FMinAlter;
+    property MaxAlter: integer read FMaxAlter write FMaxAlter;
+    property MinBargeld: integer read FMinBargeld write FMinBargeld;
+    property MaxBargeld: integer read FMaxBargeld write FMaxBargeld;
+    property EntfernteKunden: double read FEntfernteKunden
+      write FEntfernteKunden;
+    property WartezeitGesamt: double read FWartezeitGesamt
+      write FWartezeitGesamt;
+    property AufenthaltGesamt: double read FAufenthaltGesamt
+      write FAufenthaltGesamt;
+    property LaengsteWartezeit: double read FLaengsteWartezeit
+      write FLaengsteWartezeit;
+    property KuerzesteWartezeit: double read FKuerzesteWartezeit
+      write FKuerzesteWartezeit;
+    property Wartezeitdurchschnitt: double read getWartezeitDurchschnitt;
+    property WartezeitdurchschnittString: string
+      read getWartezeitDurchschnittString;
+    property MaxWartezeitDurchschnitt: double read FMaxWartezeitDurchschnitt
+      write FMaxWartezeitDurchschnitt;
+    property MaxWartezeitStundenDurchschnitt: double
+      read FMaxWartezeitStundenDurchschnitt
+      write FMaxWartezeitStundenDurchschnitt;
+    property AufenthaltDurchschnitt: double read getAufenthaltDurchschnitt;
+    property WarteZeitenNachStunden: TList<double> read FWartezeitenNachStunden
+      write FWartezeitenNachStunden;
+    property WartezeitenAktuelleStunde: TList<double>
+      read FWartezeitenAktuelleStunde write FWartezeitenAktuelleStunde;
+    property TimerCounter: integer read FTimerCounter write FTimerCounter;
+    procedure KundeErstellen(); overload;
+    procedure KundeErstellen(Limit: integer); overload;
+    procedure TimerEvent(supermarktOffen: boolean);
   end;
 
 implementation
@@ -146,10 +167,10 @@ var
   Wert   : double;
   Artikel: integer;
 begin
-  Wert := 0;
+  Wert        := 0;
   for Artikel := 0 to self.ArtikelListe.Count - 1 do
-    Wert := Wert + ArtikelListe[Artikel].Wert;
-  result := Wert;
+    Wert      := Wert + ArtikelListe[Artikel].Wert;
+  result      := Wert;
 end;
 
 { TKunde }
@@ -161,19 +182,20 @@ begin
   randomArtikelIndex := Random(self.Sortiment.ArtikeAnzahl);
   if ZufallsBoolean(60) then
   begin
-    self.Warenkorb.ArtikelHinzufuegen(self.Sortiment.WarenListe[randomArtikelIndex]);
+    self.Warenkorb.ArtikelHinzufuegen(self.Sortiment.WarenListe
+      [randomArtikelIndex]);
     if ZufallsBoolean(7) then
       self.Warenkorb.ArtikelListe.Delete(self.Warenkorb.ArtikelAnzahl - 1);
   end;
   if self.Warenkorb.Wert > (self.Bargeld * GRENZE_BARGELD) then
   begin
     self.TimerAussetzenCounter := Zufallszahl(5, 15);
-    self.Kundenstatus := ksZurKasseGehen;
+    self.Kundenstatus          := ksZurKasseGehen;
   end
   else if ZufallsBoolean(4) then
   begin
     self.TimerAussetzenCounter := Zufallszahl(5, 15);
-    self.Kundenstatus := ksZurKasseGehen;
+    self.Kundenstatus          := ksZurKasseGehen;
   end;
 end;
 
@@ -183,7 +205,8 @@ begin
     self.Warenkorb.ArtikelListe.Delete(0);
 end;
 
-function TKunde.Bezahlen(Betrag: double; KleingeldParameter: TKleingeldParameter): boolean;
+function TKunde.Bezahlen(Betrag: double;
+  KleingeldParameter: TKleingeldParameter): boolean;
 var
   kleingeldQuote: integer;
   kleinGeldModus: boolean;
@@ -191,19 +214,21 @@ begin
   kleingeldQuote := Random(100);
   kleinGeldModus := ((self.Alter > KleingeldParameter.AlterKleingeldquote) and
     (kleingeldQuote < KleingeldParameter.KleingeldZahlerAlt));
-  if kleinGeldModus or (kleingeldQuote < KleingeldParameter.KleingeldZahlerRest) then
+  if kleinGeldModus or (kleingeldQuote < KleingeldParameter.KleingeldZahlerRest)
+  then
     result := false
   else
     result := self.Bargeld > Betrag;
 end;
 
-constructor TKunde.create(Alter: integer; Bargeld: double; Sortiment: TSortiment);
+constructor TKunde.create(Alter: integer; Bargeld: double;
+  Sortiment: TSortiment);
 begin
-  self.Alter := Alter;
-  self.Bargeld := Bargeld;
-  self.Warenkorb := TWarenkorb.create;
-  self.Sortiment := Sortiment;
-  self.Kundenstatus := ksArtikelEinpacken;
+  self.Alter           := Alter;
+  self.Bargeld         := Bargeld;
+  self.Warenkorb       := TWarenkorb.create;
+  self.Sortiment       := Sortiment;
+  self.Kundenstatus    := ksArtikelEinpacken;
   self.DauerAufenthalt := 0;
 end;
 
@@ -220,21 +245,24 @@ begin
     self.Kundenstatus := ksBereitZumZahlen;
 end;
 
-function TKunde.WarteschlangenBeurteilen(Warteschlangen: TList<TWarteschlangenVolumen>): TList<TWarteschlangenVolumen>;
+function TKunde.WarteschlangenBeurteilen(Warteschlangen
+  : TList<TWarteschlangenVolumen>): TList<TWarteschlangenVolumen>;
 var
   schaetzMultiplikator      : double;
   persoenlicherEindruck     : TWarteschlangenVolumen;
   persoenlicherEindruckListe: TList<TWarteschlangenVolumen>;
   I                         : integer;
 begin
-  schaetzMultiplikator := (100 - Random(20)) / 100;
+  schaetzMultiplikator       := (100 - Random(20)) / 100;
   persoenlicherEindruckListe := TList<TWarteschlangenVolumen>.create;
-  for I := 0 to Warteschlangen.Count - 1 do
+  for I                      := 0 to Warteschlangen.Count - 1 do
   begin
     if Warteschlangen[I].SchlangeOffen then
     begin
-      persoenlicherEindruck.ArtikelVolumen := Warteschlangen[I].ArtikelVolumen * schaetzMultiplikator;
-      persoenlicherEindruck.SchlangenNummer := Warteschlangen[I].SchlangenNummer;
+      persoenlicherEindruck.ArtikelVolumen := Warteschlangen[I].ArtikelVolumen *
+        schaetzMultiplikator;
+      persoenlicherEindruck.SchlangenNummer := Warteschlangen[I]
+        .SchlangenNummer;
       persoenlicherEindruck.SchlangeOffen := Warteschlangen[I].SchlangeOffen;
       persoenlicherEindruckListe.Add(persoenlicherEindruck);
     end;
@@ -242,13 +270,14 @@ begin
   result := persoenlicherEindruckListe;
 end;
 
-function TKunde.WarteschlangeWaehlen(Warteschlangen: TList<TWarteschlangenVolumen>): integer;
+function TKunde.WarteschlangeWaehlen(Warteschlangen
+  : TList<TWarteschlangenVolumen>): integer;
 var
   randomQuote            : integer;
   subjektiveEinschaetzung: TList<TWarteschlangenVolumen>;
 begin
   try
-    randomQuote := Random(100);
+    randomQuote             := Random(100);
     subjektiveEinschaetzung := self.WarteschlangenBeurteilen(Warteschlangen);
     subjektiveEinschaetzung.Sort;
     if subjektiveEinschaetzung.Count = 1 then
@@ -256,7 +285,8 @@ begin
       result := subjektiveEinschaetzung[0].SchlangenNummer;
       Exit;
     end;
-    if subjektiveEinschaetzung[0].ArtikelVolumen < (subjektiveEinschaetzung[1].ArtikelVolumen * 0.8) then
+    if subjektiveEinschaetzung[0].ArtikelVolumen <
+      (subjektiveEinschaetzung[1].ArtikelVolumen * 0.8) then
     begin
       result := subjektiveEinschaetzung[0].SchlangenNummer;
       Exit;
@@ -281,9 +311,11 @@ begin
     begin
       for I := 0 to self.KundenListe.Count - 1 do
       begin
-        self.KundenListe[I].DauerAufenthalt := self.KundenListe[I].DauerAufenthalt + 1;
+        self.KundenListe[I].DauerAufenthalt := self.KundenListe[I]
+          .DauerAufenthalt + 1;
         if self.KundenListe[I].Kundenstatus = ksInWarteschlange then
-          self.KundenListe[I].DauerWarteschlange := self.KundenListe[I].DauerWarteschlange + 1;
+          self.KundenListe[I].DauerWarteschlange := self.KundenListe[I]
+            .DauerWarteschlange + 1;
       end;
     end;
   finally
@@ -292,25 +324,27 @@ begin
 
 end;
 
-constructor TKundenVerwalter.create(Parameter: TKundenParameter; Sortiment: TSortiment);
+constructor TKundenVerwalter.create(Parameter: TKundenParameter;
+  Sortiment: TSortiment);
 begin
-  self.Kundenverwalterstatus := kvNormal;
-  self.KundenListe := TList<TKunde>.create;
-  self.WarteZeitenNachStunden := TList<double>.create;
-  self.WartezeitenAktuelleStunde := TList<double>.create;
-  self.KundenFrequenz := Parameter.KundenFrequenz;
-  self.KundenKapazitaet := Parameter.KundenKapazitaet;
-  self.FlashmobQuote := Parameter.FlashmobQuote;
-  self.MinAlter := Parameter.MinAlter;
-  self.MaxAlter := Parameter.MaxAlter;
-  self.MinBargeld := Parameter.MinBargeld;
-  self.MaxBargeld := Parameter.MaxBargeld;
-  self.Sortiment := Sortiment;
-  self.EntfernteKunden := 0;
-  self.WartezeitGesamt := 0;
-  self.LaengsteWartezeit := 0;
-  self.MaxWartezeitDurchschnitt := 0;
-  self.TimerCounter := 0;
+  self.Kundenverwalterstatus           := kvNormal;
+  self.KundenListe                     := TList<TKunde>.create;
+  self.WarteZeitenNachStunden          := TList<double>.create;
+  self.WartezeitenAktuelleStunde       := TList<double>.create;
+  self.KundenFrequenz                  := Parameter.KundenFrequenz;
+  self.KundenKapazitaet                := Parameter.KundenKapazitaet;
+  self.FlashmobQuote                   := Parameter.FlashmobQuote;
+  self.MinAlter                        := Parameter.MinAlter;
+  self.MaxAlter                        := Parameter.MaxAlter;
+  self.MinBargeld                      := Parameter.MinBargeld;
+  self.MaxBargeld                      := Parameter.MaxBargeld;
+  self.Sortiment                       := Sortiment;
+  self.EntfernteKunden                 := 0;
+  self.WartezeitGesamt                 := 0;
+  self.LaengsteWartezeit               := 0;
+  self.MaxWartezeitDurchschnitt        := 0;
+  self.MaxWartezeitStundenDurchschnitt := 0;
+  self.TimerCounter                    := 0;
 end;
 
 procedure TKundenVerwalter.FlashMob;
@@ -323,7 +357,7 @@ end;
 
 procedure TKundenVerwalter.FlashMobStarten;
 begin
-  self.FlashMobTimer := Zufallszahl(5, 15);
+  self.FlashMobTimer         := Zufallszahl(5, 15);
   self.Kundenverwalterstatus := kvFlashMob;
 end;
 
@@ -341,7 +375,7 @@ var
   I     : integer;
 begin
   Kunden := 0;
-  for I := 0 to self.KundenAnzahl - 1 do
+  for I  := 0 to self.KundenAnzahl - 1 do
   begin
     if self.KundenListe[I].Kundenstatus = ksArtikelEinpacken then
       Inc(Kunden);
@@ -360,10 +394,10 @@ var
   I     : integer;
 begin
   Kunden := 0;
-  for I := 0 to self.KundenAnzahl - 1 do
+  for I  := 0 to self.KundenAnzahl - 1 do
   begin
-    if (self.KundenListe[I].Kundenstatus = ksInWarteschlange) or (self.KundenListe[I].Kundenstatus = ksBereitZumZahlen)
-    then
+    if (self.KundenListe[I].Kundenstatus = ksInWarteschlange) or
+      (self.KundenListe[I].Kundenstatus = ksBereitZumZahlen) then
       Inc(Kunden);
   end;
   result := Kunden;
@@ -384,8 +418,9 @@ var
   minutenstring : string;
   sekundenstring: string;
 begin
-  minuten := trunc(self.Wartezeitdurchschnitt);
-  sekunden := trunc((trunc((self.Wartezeitdurchschnitt - minuten) * 100) / 100) * 60);
+  minuten  := trunc(self.Wartezeitdurchschnitt);
+  sekunden := trunc((trunc((self.Wartezeitdurchschnitt - minuten) * 100) /
+    100) * 60);
   if minuten >= 10 then
     minutenstring := minuten.ToString()
   else
@@ -394,7 +429,7 @@ begin
     sekundenstring := sekunden.ToString()
   else
     sekundenstring := '0' + sekunden.ToString();
-  result := minutenstring + ':' + sekundenstring + ' Minuten';
+  result           := minutenstring + ':' + sekundenstring + ' Minuten';
 end;
 
 procedure TKundenVerwalter.KassierteKundenEntfernen;
@@ -408,13 +443,17 @@ begin
       begin
         if self.KundenListe[I].Kundenstatus = ksZahlenFertig then
         begin
-          if self.KuerzesteWartezeit > self.KundenListe[I].DauerWarteschlange then
+          if self.KuerzesteWartezeit > self.KundenListe[I].DauerWarteschlange
+          then
             self.KuerzesteWartezeit := self.KundenListe[I].DauerWarteschlange;
-          if self.LaengsteWartezeit < self.KundenListe[I].DauerWarteschlange then
+          if self.LaengsteWartezeit < self.KundenListe[I].DauerWarteschlange
+          then
             self.LaengsteWartezeit := self.KundenListe[I].DauerWarteschlange;
-          self.EntfernteKunden := self.EntfernteKunden + 1;
-          self.WartezeitGesamt := self.WartezeitGesamt + self.KundenListe[I].DauerWarteschlange;
-          self.AufenthaltGesamt := self.AufenthaltGesamt + self.KundenListe[I].DauerAufenthalt;
+          self.EntfernteKunden     := self.EntfernteKunden + 1;
+          self.WartezeitGesamt := self.WartezeitGesamt + self.KundenListe[I]
+            .DauerWarteschlange;
+          self.AufenthaltGesamt := self.AufenthaltGesamt + self.KundenListe[I]
+            .DauerAufenthalt;
           self.KundenListe.Delete(I);
         end;
         dec(I);
@@ -434,7 +473,8 @@ begin
     for I := 0 to self.KundenListe.Count - 1 do
     begin
       if self.KundenListe[I].Kundenstatus = ksZahlenFertig then
-        self.WartezeitenAktuelleStunde.Add(self.KundenListe[I].DauerWarteschlange.ToDouble)
+        self.WartezeitenAktuelleStunde.Add
+          (self.KundenListe[I].DauerWarteschlange.ToDouble)
     end;
     if self.TimerCounter = 59 then
       self.WartezeitenStundenMittelErfassen;
@@ -447,15 +487,17 @@ var
   stundenMittel: double;
   I            : integer;
 begin
-  stundenGesamt := 0;
-  for I := 0 to self.WartezeitenAktuelleStunde.Count - 1 do
+  stundenGesamt   := 0;
+  for I           := 0 to self.WartezeitenAktuelleStunde.Count - 1 do
     stundenGesamt := stundenGesamt + self.WartezeitenAktuelleStunde[I];
-  if not self.WartezeitenAktuelleStunde.Count = 0 then
-    stundenMittel := stundenGesamt / self.WartezeitenAktuelleStunde.Count
+  if self.WartezeitenAktuelleStunde.Count = 0 then
+    stundenMittel := 0
   else
-    stundenMittel := 0;
+    stundenMittel := stundenGesamt / self.WartezeitenAktuelleStunde.Count / 2;
   self.WarteZeitenNachStunden.Add(stundenMittel);
   self.WartezeitenAktuelleStunde.Clear;
+  if stundenMittel > self.MaxWartezeitStundenDurchschnitt then
+    self.MaxWartezeitStundenDurchschnitt := stundenMittel;
 end;
 
 procedure TKundenVerwalter.KundeErstellen();
@@ -466,9 +508,10 @@ var
 begin
   for I := 1 to self.KundenFrequenz - 1 do
   begin
-    if (self.KundenListe.Count < self.KundenKapazitaet) and (ZufallsBoolean(60)) then
+    if (self.KundenListe.Count < self.KundenKapazitaet) and (ZufallsBoolean(60))
+    then
     begin
-      Alter := Zufallszahl(self.MinAlter, self.MaxAlter);
+      Alter   := Zufallszahl(self.MinAlter, self.MaxAlter);
       Bargeld := Zufallszahl(self.MinBargeld, self.MaxBargeld);
       self.KundenListe.Add(TKunde.create(Alter, Bargeld, self.Sortiment));
     end;
@@ -483,9 +526,10 @@ var
 begin
   for I := 1 to Limit - 1 do
   begin
-    if (self.KundenListe.Count < self.KundenKapazitaet) and (ZufallsBoolean(60)) then
+    if (self.KundenListe.Count < self.KundenKapazitaet) and (ZufallsBoolean(60))
+    then
     begin
-      Alter := Zufallszahl(self.MinAlter, self.MaxAlter);
+      Alter   := Zufallszahl(self.MinAlter, self.MaxAlter);
       Bargeld := Zufallszahl(self.MinBargeld, self.MaxBargeld);
       self.KundenListe.Add(TKunde.create(Alter, Bargeld, self.Sortiment));
     end;
