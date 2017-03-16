@@ -54,28 +54,34 @@ type
 
   TKundenVerwalter = class
     private
-      FKundenVerwalterStatus            : TKundenVerwalterStatus;
-      FKundenListe                      : TList<TKunde>;
-      FKundenFrequenz                   : integer;
-      FKundenKapazitaet                 : integer;
-      FFlashmobQuote                    : integer;
-      FFlashmobTimer                    : integer;
-      FSortiment                        : TSortiment;
-      FMinAlter                         : integer;
-      FMaxAlter                         : integer;
-      FMinBargeld                       : integer;
-      FMaxBargeld                       : integer;
-      FEntfernteKunden                  : double;
-      FKuerzesteWartezeit               : double;
-      FLaengsteWartezeit                : double;
-      FWartezeitGesamt                  : double;
-      FAufenthaltGesamt                 : double;
-      FMaxWartezeitDurchschnitt         : double;
+      FKundenVerwalterStatus    : TKundenVerwalterStatus;
+      FKundenListe              : TList<TKunde>;
+      FKundenFrequenz           : integer;
+      FKundenKapazitaet         : integer;
+      FFlashmobQuote            : integer;
+      FFlashmobTimer            : integer;
+      FSortiment                : TSortiment;
+      FMinAlter                 : integer;
+      FMaxAlter                 : integer;
+      FMinBargeld               : integer;
+      FMaxBargeld               : integer;
+      FEntfernteKunden          : double;
+      FKuerzesteWartezeit       : double;
+      FLaengsteWartezeit        : double;
+      FWartezeitGesamt          : double;
+      FAufenthaltGesamt         : double;
+      FMaxWartezeitDurchschnitt : double;
+      FWartezeitenNachStunden   : TList<double>;
+      FWartezeitenAktuelleStunde: TList<double>;
+      FTimerCounter             : integer;
       procedure AufenthaltMessen();
       procedure KassierteKundenEntfernen();
       procedure MaxWartezeitDurchschnittAktualisieren();
       procedure FlashMobStarten();
       procedure FlashMob();
+      procedure WartezeitenErfassen();
+      procedure WartezeitenStundenMittelErfassen();
+      procedure TimerHochsetzen();
       function getKundenAnzahl(): integer;
       function getEinpackendeKunden(): integer;
       function getWartendeKunden(): integer;
@@ -107,6 +113,10 @@ type
       property WartezeitdurchschnittString: string read getWartezeitDurchschnittString;
       property MaxWartezeitDurchschnitt: double read FMaxWartezeitDurchschnitt write FMaxWartezeitDurchschnitt;
       property AufenthaltDurchschnitt: double read getAufenthaltDurchschnitt;
+      property WarteZeitenNachStunden: TList<double> read FWartezeitenNachStunden write FWartezeitenNachStunden;
+      property WartezeitenAktuelleStunde: TList<double> read FWartezeitenAktuelleStunde
+        write FWartezeitenAktuelleStunde;
+      property TimerCounter: integer read FTimerCounter write FTimerCounter;
       procedure KundeErstellen(); overload;
       procedure KundeErstellen(Limit: integer); overload;
       procedure TimerEvent(supermarktOffen: boolean);
@@ -286,6 +296,8 @@ constructor TKundenVerwalter.create(Parameter: TKundenParameter; Sortiment: TSor
 begin
   self.Kundenverwalterstatus := kvNormal;
   self.KundenListe := TList<TKunde>.create;
+  self.WarteZeitenNachStunden := TList<double>.create;
+  self.WartezeitenAktuelleStunde := TList<double>.create;
   self.KundenFrequenz := Parameter.KundenFrequenz;
   self.KundenKapazitaet := Parameter.KundenKapazitaet;
   self.FlashmobQuote := Parameter.FlashmobQuote;
@@ -298,6 +310,7 @@ begin
   self.WartezeitGesamt := 0;
   self.LaengsteWartezeit := 0;
   self.MaxWartezeitDurchschnitt := 0;
+  self.TimerCounter := 0;
 end;
 
 procedure TKundenVerwalter.FlashMob;
@@ -411,6 +424,40 @@ begin
     end;
 end;
 
+procedure TKundenVerwalter.WartezeitenErfassen();
+var
+  I: integer;
+begin
+  if self.KundenListe.Count > 0 then
+  begin
+
+    for I := 0 to self.KundenListe.Count - 1 do
+    begin
+      if self.KundenListe[I].Kundenstatus = ksZahlenFertig then
+        self.WartezeitenAktuelleStunde.Add(self.KundenListe[I].DauerWarteschlange.ToDouble)
+    end;
+    if self.TimerCounter = 59 then
+      self.WartezeitenStundenMittelErfassen;
+  end;
+end;
+
+procedure TKundenVerwalter.WartezeitenStundenMittelErfassen;
+var
+  stundenGesamt: double;
+  stundenMittel: double;
+  I            : integer;
+begin
+  stundenGesamt := 0;
+  for I := 0 to self.WartezeitenAktuelleStunde.Count - 1 do
+    stundenGesamt := stundenGesamt + self.WartezeitenAktuelleStunde[I];
+  if not self.WartezeitenAktuelleStunde.Count = 0 then
+    stundenMittel := stundenGesamt / self.WartezeitenAktuelleStunde.Count
+  else
+    stundenMittel := 0;
+  self.WarteZeitenNachStunden.Add(stundenMittel);
+  self.WartezeitenAktuelleStunde.Clear;
+end;
+
 procedure TKundenVerwalter.KundeErstellen();
 var
   Alter  : integer;
@@ -455,8 +502,6 @@ procedure TKundenVerwalter.TimerEvent(supermarktOffen: boolean);
 var
   I: integer;
 begin
-  self.AufenthaltMessen;
-  self.MaxWartezeitDurchschnittAktualisieren;
   if supermarktOffen then
     case self.Kundenverwalterstatus of
       kvNormal:
@@ -468,12 +513,23 @@ begin
       kvFlashMob:
         self.FlashMob;
     end;
+  self.WartezeitenErfassen;
   self.KassierteKundenEntfernen;
+  self.AufenthaltMessen;
+  self.MaxWartezeitDurchschnittAktualisieren;
   for I := 0 to self.KundenListe.Count - 1 do
   begin
     self.KundenListe[I].TimerEvent;
   end;
+  self.TimerHochsetzen;
+end;
 
+procedure TKundenVerwalter.TimerHochsetzen;
+begin
+  if self.TimerCounter = 59 then
+    self.TimerCounter := 0
+  else
+    self.TimerCounter := self.TimerCounter + 1;
 end;
 
 end.

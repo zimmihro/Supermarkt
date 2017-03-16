@@ -14,8 +14,6 @@ type
       FKundenVerwalter          : TKundenVerwalter;
       FUhrzeit                  : integer;
       FIstGeoeffnet             : boolean;
-      FWartezeitenNachStunden   : TList<double>;
-      FWartezeitenAktuelleStunde: TList<double>;
       function getWarteschlangenVolumen(): TList<TWarteschlangenVolumen>;
       procedure KundenAnKassensystemUebergeben();
       procedure SupermarktSchliessen();
@@ -30,9 +28,6 @@ type
       property Uhrzeit                  : integer read FUhrzeit write FUhrzeit;
       property UhrzeitString            : string read getUhrzeit;
       property IstGeoeffnet             : boolean read FIstGeoeffnet write FIstGeoeffnet;
-      property WarteZeitenNachStunden   : TList<double> read FWartezeitenNachStunden write FWartezeitenNachStunden;
-      property WartezeitenAktuelleStunde: TList<double> read FWartezeitenAktuelleStunde
-        write FWartezeitenAktuelleStunde;
       constructor create(KassenParameter: TKassenParameter; KundenParameter: TKundenParameter;
         SortimentParameter: TSortimentParameter; KleingeldParameter: TKleingeldParameter);
       procedure TimerEvent();

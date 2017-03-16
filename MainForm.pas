@@ -59,6 +59,8 @@ type
     FlashmobQuoteLabel: TLabel;
     FlashmobQuoteEdit: TEdit;
     KundenImMarktChart: TJvChart;
+    TageText: TLabel;
+    TageLabel: TLabel;
     procedure StartButtonClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure PauseButtonClick(Sender: TObject);
@@ -71,8 +73,8 @@ type
       SortimentParameter: TSortimentParameter;
       Multiplikator     : integer;
       Supermarkt        : TSupermarkt;
+      SimulierteTage    : integer;
       Laufzeit          : integer;
-      TickZeit          : Int64;
       MaxWartezeit      : integer;
       procedure ParameterEinlesen();
       procedure KundenparameterEinlesen();
@@ -119,6 +121,7 @@ begin
   if self.NutzerEingabenPruefen then
   begin
     self.Laufzeit := 0;
+    self.SimulierteTage := 0;
     self.MaxWartezeit := 0;
     self.ParameterEinlesen;
     self.SortimentParameter.Pfad := 'D:\Test.txt';
@@ -135,6 +138,8 @@ procedure TForm1.WartezeitChartAktualisieren;
 begin
   self.WartezeitChart.Options.PrimaryYAxis.YMax := self.Supermarkt.Kundenverwalter.MaxWartezeitDurchschnitt + 1;
   self.WartezeitChart.Data.Value[0, Laufzeit] := self.Supermarkt.Kundenverwalter.Wartezeitdurchschnitt;
+  if self.Supermarkt.Kundenverwalter.WarteZeitenNachStunden.Count > 0 then
+    self.WartezeitChart.Data.Value[1,laufzeit] := self.Supermarkt.Kundenverwalter.WarteZeitenNachStunden.Last;
   self.WartezeitChart.PlotGraph;
 end;
 
@@ -162,6 +167,7 @@ begin
   self.KleingeldZahlerAltEdit.Enabled := not self.KleingeldZahlerAltEdit.Enabled;
   self.KleingeldZahlerRestEdit.Enabled := not self.KleingeldZahlerRestEdit.Enabled;
   self.KundenkapazitaetEdit.Enabled := not self.KundenkapazitaetEdit.Enabled;
+  self.maxScanGeschwindigkeitEdit.Enabled := not self.maxScanGeschwindigkeitEdit.Enabled;
   self.StartButton.Visible := not self.StartButton.Visible;
   self.BeendenButton.Visible := not self.BeendenButton.Visible;
 end;
@@ -188,6 +194,7 @@ begin
   self.KassenChart.Data.ValueCount := self.KassenParameter.AnzahlKassen;
   self.KassenChart.Options.PenColor[0] := clGreen;
   self.WartezeitChart.Options.PenColor[0] := clBlack;
+  self.WartezeitChart.Options.PenColor[1] := clBlue;
   self.WartezeitChart.Data.ValueCount := 13 * 60;
   self.KundenImMarktChart.Options.PenColor[0] := clBlack;
   self.KundenImMarktChart.Options.PrimaryYAxis.YMax := self.Supermarkt.Kundenverwalter.KundenKapazitaet;
@@ -232,6 +239,7 @@ begin
   self.WarteZeitLabel.Caption := self.Supermarkt.Kundenverwalter.WartezeitdurchschnittString;
   self.UhrzeitLabel.Caption := self.Supermarkt.UhrzeitString;
   self.LaengsteWartezeitLabel.Caption := self.Supermarkt.Kundenverwalter.LaengsteWartezeit.ToString();
+  self.TageLabel.Caption := self.SimulierteTage.ToString();
 end;
 
 procedure TForm1.LabelsZuruecksetzen;
@@ -265,8 +273,11 @@ begin
   self.WartezeitChartAktualisieren;
   self.KundenImMarktChartAktualisieren;
   self.LabelsAktualisieren;
-  if self.Laufzeit = 13*80 then
-    self.Laufzeit := 0
+  if self.Laufzeit = 13 * 80 then
+    begin
+    self.Laufzeit := 0;
+    self.SimulierteTage := self.SimulierteTage+1;
+    end
   else
     Inc(self.Laufzeit);
 end;

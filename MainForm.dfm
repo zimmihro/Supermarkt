@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 660
   Top = 0
-  Caption = 'Form1'
+  Caption = 'SImulationsprojekt - Tobias Zimmermann'
   ClientHeight = 717
   ClientWidth = 1400
   Color = clBtnFace
@@ -116,8 +116,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object UhrzeitLabel: TLabel
-    Left = 1112
-    Top = 147
+    Left = 1107
+    Top = 166
     Width = 60
     Height = 29
     Caption = '08:00'
@@ -246,8 +246,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object UhrzeitText: TLabel
-    Left = 1023
-    Top = 147
+    Left = 1018
+    Top = 166
     Width = 83
     Height = 29
     Caption = 'Uhrzeit:'
@@ -297,6 +297,32 @@ object Form1: TForm1
     Options.CursorColor = clBlack
     Options.CursorStyle = psSolid
   end
+  object TageText: TLabel
+    Left = 1053
+    Top = 131
+    Width = 48
+    Height = 29
+    Caption = 'Tag:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
+  object TageLabel: TLabel
+    Left = 1154
+    Top = 131
+    Width = 13
+    Height = 29
+    Caption = '0'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -24
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+  end
   object JvPageControl1: TJvPageControl
     Left = 0
     Top = 0
@@ -306,7 +332,6 @@ object Form1: TForm1
     TabOrder = 0
     object GrundeinstellungenTabSheet: TTabSheet
       Caption = 'Grundeinstellungen'
-      ExplicitHeight = 393
       object maxGeldLabel: TLabel
         Left = 9
         Top = 207
@@ -448,7 +473,7 @@ object Form1: TForm1
         Height = 45
         BorderWidth = 2
         LineSize = 2
-        Max = 60
+        Max = 120
         Min = 1
         Frequency = 5
         Position = 30
@@ -472,7 +497,6 @@ object Form1: TForm1
     object ZufallsparameterTabSheet: TTabSheet
       Caption = 'Zufallsparameter'
       ImageIndex = 1
-      ExplicitHeight = 637
       object AlterKleingeldQuoteText: TLabel
         Left = 11
         Top = 16
