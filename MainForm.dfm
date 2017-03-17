@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoSize = True
-  Caption = 'SImulationsprojekt - Tobias Zimmermann'
+  Caption = 'Simulationsprojekt - Tobias Zimmermann'
   ClientHeight = 790
   ClientWidth = 1289
   Color = clWindow
@@ -223,7 +223,6 @@ object Form1: TForm1
     Top = 334
     Width = 9
     Height = 19
-    Alignment = taRightJustify
     Caption = '0'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -288,6 +287,7 @@ object Form1: TForm1
     Options.XAxisHeader = 'Zeit in Minuten'
     Options.XOrigin = 0
     Options.YOrigin = 0
+    Options.YStartOffset = 42
     Options.PrimaryYAxis.YMax = 10.000000000000000000
     Options.PrimaryYAxis.YLegendDecimalPlaces = 0
     Options.SecondaryYAxis.YMax = 10.000000000000000000
@@ -493,7 +493,7 @@ object Form1: TForm1
         Height = 45
         BorderWidth = 2
         LineSize = 2
-        Max = 120
+        Max = 60
         Min = 1
         Frequency = 5
         Position = 30

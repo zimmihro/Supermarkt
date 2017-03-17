@@ -446,9 +446,9 @@ begin
           if self.KuerzesteWartezeit > self.KundenListe[I].DauerWarteschlange
           then
             self.KuerzesteWartezeit := self.KundenListe[I].DauerWarteschlange;
-          if self.LaengsteWartezeit < self.KundenListe[I].DauerWarteschlange
+          if self.LaengsteWartezeit < self.KundenListe[I].DauerWarteschlange / 2
           then
-            self.LaengsteWartezeit := self.KundenListe[I].DauerWarteschlange;
+            self.LaengsteWartezeit := self.KundenListe[I].DauerWarteschlange / 2;
           self.EntfernteKunden     := self.EntfernteKunden + 1;
           self.WartezeitGesamt := self.WartezeitGesamt + self.KundenListe[I]
             .DauerWarteschlange;

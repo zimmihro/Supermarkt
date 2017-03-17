@@ -88,6 +88,7 @@ type
     procedure EingabeFelderUmschalten();
     procedure LabelsAktualisieren();
     procedure LabelsZuruecksetzen();
+    procedure ChartsZuruecksetzen();
     procedure SortimentListViewFuellen();
     function NutzerEingabenPruefen(): boolean;
   public
@@ -122,8 +123,9 @@ begin
   if self.NutzerEingabenPruefen then
   begin
     self.LabelsZuruecksetzen;
-    self.Laufzeit       := 0;
-    self.MaxWartezeit   := 0;
+    self.ChartsZuruecksetzen;
+    self.Laufzeit     := 0;
+    self.MaxWartezeit := 0;
     self.ParameterEinlesen;
     self.SortimentParameter.Pfad         := 'D:\Test.txt';
     self.SortimentParameter.Trennzeichen := '|';
@@ -188,7 +190,8 @@ procedure TForm1.KassenChartAktualisieren;
 var
   I: integer;
 begin
-
+  self.KassenChart.Options.PrimaryYAxis.YMax := self.Supermarkt.Kassensystem.LaengsteSchlange;
+  self.KassenChart.Options.PrimaryYAxis.YDivisions := self.Supermarkt.Kassensystem.LaengsteSchlange;
   for I := 0 to self.KassenParameter.AnzahlKassen - 1 do
     if self.Supermarkt.Kassensystem.KassenListe[I].IstGeoffnet then
       self.KassenChart.Data.Value[0, I] := self.Supermarkt.Kassensystem.KassenListe[I]
@@ -207,6 +210,16 @@ begin
   self.KundenImMarktChart.Options.PrimaryYAxis.YMax :=
     self.Supermarkt.Kundenverwalter.KundenKapazitaet;
   self.KundenImMarktChart.Data.ValueCount := 13 * 60;
+end;
+
+procedure TForm1.ChartsZuruecksetzen;
+begin
+  self.KassenChart.Data.Clear;
+  self.KassenChart.PlotGraph;
+  self.WartezeitChart.Data.Clear;
+  self.WartezeitChart.PlotGraph;
+  self.KundenImMarktChart.Data.Clear;
+  self.KundenImMarktChart.PlotGraph;
 end;
 
 procedure TForm1.KassenParameterEinlesen;
@@ -259,10 +272,6 @@ begin
   self.WarteZeitLabel.Caption         := '0';
   self.UhrzeitLabel.Caption           := '08:00';
   self.LaengsteWartezeitLabel.Caption := '0';
-  self.KassenChart.Data.Clear;
-  self.KassenChart.PlotGraph;
-  self.WartezeitChart.Data.Clear;
-  self.WartezeitChart.PlotGraph;
 end;
 
 function TForm1.NutzerEingabenPruefen: boolean;
@@ -287,7 +296,10 @@ begin
   self.KundenImMarktChartAktualisieren;
   self.LabelsAktualisieren;
   if self.Laufzeit = 13 * 80 then
-    self.Laufzeit       := 0
+  begin
+    self.Laufzeit := 0;
+    self.ChartsZuruecksetzen;
+  end
   else
     Inc(self.Laufzeit);
 end;
