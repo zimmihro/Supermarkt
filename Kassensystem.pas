@@ -383,10 +383,7 @@ begin
 end;
 
 procedure TKassenSystem.verwalteKassenBedarf;
-var
-  Bedarf: integer;
 begin
-  Bedarf := trunc(self.WartendeKundenDurchschnitt) div 4;
   if (self.OffeneKassen = 0) or (self.WartendeKundenDurchschnitt > 4) then
     self.OeffneKasse;
   if (self.WartendeKundenDurchschnitt < 3) and (self.OffeneKassen > 1) then

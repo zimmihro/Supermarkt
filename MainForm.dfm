@@ -1,5 +1,5 @@
 object Form1: TForm1
-  Left = 660
+  Left = 0
   Top = 0
   Anchors = [akLeft, akTop, akRight, akBottom]
   AutoSize = True
@@ -432,6 +432,7 @@ object Form1: TForm1
         NumbersOnly = True
         TabOrder = 0
         Text = '8'
+        OnExit = AnzahlKassenEditExit
       end
       object minGeldEdit: TEdit
         Left = 145

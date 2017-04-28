@@ -68,6 +68,7 @@ type
     procedure PauseButtonClick(Sender: TObject);
     procedure geschwindigkeitBarChange(Sender: TObject);
     procedure BeendenButtonClick(Sender: TObject);
+    procedure AnzahlKassenEditExit(Sender: TObject);
   private
     KundenParameter   : TKundenparameter;
     KassenParameter   : TKassenParameter;
@@ -89,7 +90,6 @@ type
     procedure LabelsAktualisieren();
     procedure LabelsZuruecksetzen();
     procedure ChartsZuruecksetzen();
-    procedure SortimentListViewFuellen();
     function NutzerEingabenPruefen(): boolean;
   public
     { Public-Deklarationen }
@@ -102,22 +102,6 @@ implementation
 
 {$R *.dfm}
 
-procedure TForm1.SortimentListViewFuellen;
-var
-  artikelListe: TStringList;
-  I           : integer;
-  Item        : TJvListItems;
-begin
-  artikelListe := TStringList.Create;
-  artikelListe.LoadFromFile('D:\Test.txt');
-  for I := 0 to artikelListe.Count - 1 do
-  begin
-    // item := TJvListItems.Create(SortimentListView);
-    // item.Add := artikelliste[i];
-    // SortimentListView.Items.Add(item);
-  end;
-end;
-
 procedure TForm1.StartButtonClick(Sender: TObject);
 begin
   if self.NutzerEingabenPruefen then
@@ -127,7 +111,7 @@ begin
     self.Laufzeit     := 0;
     self.MaxWartezeit := 0;
     self.ParameterEinlesen;
-    self.SortimentParameter.Pfad         := 'D:\Test.txt';
+    self.SortimentParameter.Pfad         := ExtractFilePath(ParamStr(0)) + 'Sortiment.txt';
     self.SortimentParameter.Trennzeichen := '|';
     self.Supermarkt := TSupermarkt.Create(KassenParameter, KundenParameter, SortimentParameter,
       KleingeldParameter);
@@ -153,6 +137,15 @@ begin
     self.WartezeitChart.Data.Value[1, Laufzeit] :=
       self.Supermarkt.Kundenverwalter.WarteZeitenNachStunden.Last;
   self.WartezeitChart.PlotGraph;
+end;
+
+procedure TForm1.AnzahlKassenEditExit(Sender: TObject);
+begin
+  if strtoint(self.AnzahlKassenEdit.Text) = 0 then
+  begin
+    MessageDlg('Wert muss mindestens 1 sein', mtWarning, mbOKCancel, 0);
+    self.AnzahlKassenEdit.Text := '1';
+  end;
 end;
 
 procedure TForm1.BeendenButtonClick(Sender: TObject);
@@ -224,15 +217,15 @@ end;
 
 procedure TForm1.KassenParameterEinlesen;
 begin
-  self.KassenParameter.AnzahlKassen           := StrToInt(self.AnzahlKassenEdit.Text);
-  self.KassenParameter.maxScanGeschwindigkeit := StrToInt(self.maxScanGeschwindigkeitEdit.Text);
+  self.KassenParameter.AnzahlKassen           := strtoint(self.AnzahlKassenEdit.Text);
+  self.KassenParameter.maxScanGeschwindigkeit := strtoint(self.maxScanGeschwindigkeitEdit.Text);
 end;
 
 procedure TForm1.KleingeldParameterEinlesen;
 begin
-  self.KleingeldParameter.AlterKleingeldquote := StrToInt(self.AlterKleingeldQuoteEdit.Text);
-  self.KleingeldParameter.KleingeldZahlerAlt  := StrToInt(self.KleingeldZahlerAltEdit.Text);
-  self.KleingeldParameter.KleingeldZahlerRest := StrToInt(self.KleingeldZahlerRestEdit.Text);
+  self.KleingeldParameter.AlterKleingeldquote := strtoint(self.AlterKleingeldQuoteEdit.Text);
+  self.KleingeldParameter.KleingeldZahlerAlt  := strtoint(self.KleingeldZahlerAltEdit.Text);
+  self.KleingeldParameter.KleingeldZahlerRest := strtoint(self.KleingeldZahlerRestEdit.Text);
 end;
 
 procedure TForm1.KundenImMarktChartAktualisieren;
@@ -243,13 +236,13 @@ end;
 
 procedure TForm1.KundenparameterEinlesen;
 begin
-  self.KundenParameter.Kundenfrequenz   := StrToInt(self.KundenfrequenzEdit.Text);
-  self.KundenParameter.MinAlter         := StrToInt(self.minAlterEdit.Text);
-  self.KundenParameter.MaxAlter         := StrToInt(self.maxAlterEdit.Text);
-  self.KundenParameter.MinBargeld       := StrToInt(self.minGeldEdit.Text);
-  self.KundenParameter.MaxBargeld       := StrToInt(self.maxGeldEdit.Text);
-  self.KundenParameter.KundenKapazitaet := StrToInt(self.KundenkapazitaetEdit.Text);
-  self.KundenParameter.FlashmobQuote    := StrToInt(self.FlashmobQuoteEdit.Text);
+  self.KundenParameter.Kundenfrequenz   := strtoint(self.KundenfrequenzEdit.Text);
+  self.KundenParameter.MinAlter         := strtoint(self.minAlterEdit.Text);
+  self.KundenParameter.MaxAlter         := strtoint(self.maxAlterEdit.Text);
+  self.KundenParameter.MinBargeld       := strtoint(self.minGeldEdit.Text);
+  self.KundenParameter.MaxBargeld       := strtoint(self.maxGeldEdit.Text);
+  self.KundenParameter.KundenKapazitaet := strtoint(self.KundenkapazitaetEdit.Text);
+  self.KundenParameter.FlashmobQuote    := strtoint(self.FlashmobQuoteEdit.Text);
 end;
 
 procedure TForm1.LabelsAktualisieren;

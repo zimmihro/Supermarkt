@@ -276,7 +276,6 @@ var
   randomQuote            : integer;
   subjektiveEinschaetzung: TList<TWarteschlangenVolumen>;
 begin
-  try
     randomQuote             := Random(100);
     subjektiveEinschaetzung := self.WarteschlangenBeurteilen(Warteschlangen);
     subjektiveEinschaetzung.Sort;
@@ -295,9 +294,7 @@ begin
       result := subjektiveEinschaetzung[1].SchlangenNummer
     else
       result := subjektiveEinschaetzung[0].SchlangenNummer;
-  finally
     subjektiveEinschaetzung.Free;
-  end;
 end;
 
 { TKundenVerwalter }

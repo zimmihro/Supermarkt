@@ -6,15 +6,16 @@ uses
   SysUtils;
 
 function Zufallszahl(minimum, maximum: integer): integer;
-function ZufallsBoolean(Wahrscheinlichkeit:integer):boolean;  overload;
-function ZufallsBoolean(Wahrscheinlichkeit:integer; Basis:integer):boolean; overload;
+function ZufallsBoolean(Wahrscheinlichkeit: integer): boolean; overload;
+function ZufallsBoolean(Wahrscheinlichkeit: integer; Basis: integer): boolean; overload;
 
 type
 
-  TKassenStatus = (ksWareScannen, ksWareScannenFertig, ksKassieren, ksKassierenFertig, ksNaechsterKunde,
-    ksNaechsterKundeFertig, ksBereitZumSchliessen, ksGeschlossen);
+  TKassenStatus = (ksWareScannen, ksWareScannenFertig, ksKassieren, ksKassierenFertig,
+    ksNaechsterKunde, ksNaechsterKundeFertig, ksBereitZumSchliessen, ksGeschlossen);
 
-  TKundenStatus = (ksArtikelEinpacken, ksZurKasseGehen ,ksBereitZumZahlen, ksInWarteschlange, ksZahlen, ksZahlenFertig);
+  TKundenStatus = (ksArtikelEinpacken, ksZurKasseGehen, ksBereitZumZahlen, ksInWarteschlange,
+    ksZahlen, ksZahlenFertig);
 
   TKundenVerwalterStatus = (kvNormal, kvFlashMob);
 
@@ -47,10 +48,20 @@ type
     MaxBargeld: integer;
     Kundenfrequenz: integer;
     Kundenkapazitaet: integer;
-    FlashmobQuote:integer;
+    FlashmobQuote: integer;
   end;
 
-
+  TAuswertungsParameter = record
+    KassierteKunden: integer;
+    WartezeitDurchschnitt : integer;
+    WartezeitMaximum : integer;
+    WartezeitMinimun : integer;
+    WarenkorbDurchschnitt : double;
+    FlashmobAnzahl : integer;
+    RechnungsBetragDurchschnitt : double;
+    RechnungsBetragMaximum : double;
+    Laufzeit: integer;
+  end;
 
 implementation
 
@@ -59,14 +70,14 @@ begin
   Result := Random(maximum - minimum) + minimum;
 end;
 
-function ZufallsBoolean(Wahrscheinlichkeit:integer):boolean;
+function ZufallsBoolean(Wahrscheinlichkeit: integer): boolean;
 begin
-  result := Random(100)< Wahrscheinlichkeit;
+  Result := Random(100) < Wahrscheinlichkeit;
 end;
 
-function ZufallsBoolean(Wahrscheinlichkeit:integer; Basis:integer):boolean;
+function ZufallsBoolean(Wahrscheinlichkeit: integer; Basis: integer): boolean;
 begin
-  result := Random(basis)< Wahrscheinlichkeit;
+  Result := Random(Basis) < Wahrscheinlichkeit;
 end;
 
 end.
