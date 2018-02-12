@@ -81,7 +81,7 @@ type
     property KassenListe: TList<TKasse> read FKassenListe write FKassenListe;
     property WarteschlangenListe: TList<TWarteschlange> read FWarteschlangenListe
       write FWarteschlangenListe;
-      property LaengsteSchlange : integer read FLaengsteSchlange write FLaengsteSchlange;
+    property LaengsteSchlange: integer read FLaengsteSchlange write FLaengsteSchlange;
     property WartendeKundenGesamt: double read getWartendeKundenGesamt;
     property OffeneSchlangen: double read getOffeneSchlangen;
     property OffeneKassen: integer read getOffeneKassen;
@@ -94,12 +94,19 @@ implementation
 
 { TKasse }
 
+/// <summary>
+/// entferntden teuersten Artikel von der Rechnung
+/// </summary>
 procedure TKasse.ArtikelStornieren();
 begin
   self.GescannteArtikel.Sort;
   self.GescannteArtikel.Delete(self.GescannteArtikel.Count - 1);
 end;
 
+/// <summary>Konstruktor der TKasse-Klasse</summary>
+/// @param Kassennummer = Eindeutige Nummer der Kasse
+/// @param InputWarteschlange = zugeordnete Warteschlange
+/// @param Kleingeldparameter = record mit den Grenzwerten für den Kleingelmodus
 constructor TKasse.create(KassenNummer: integer; InputWarteschlange: TWarteschlange;
   KleingeldParameter: TKleingeldParameter);
 begin
@@ -110,16 +117,22 @@ begin
   self.IndexScanvorgang   := 0;
 end;
 
+/// <summary>Funktion zum Abfragen der Schlangenlänge</summary>
+/// @return = Anzahl der Kunden in der Warteschlange
 function TKasse.getKundenInSchlange: integer;
 begin
   result := self.Warteschlange.KundenListe.Count;
 end;
 
+/// <summary>Funktion zum Abfragen des Oeffnungsstatus</summary>
+/// @return = True wenn geöffnet, sonst False
 function TKasse.getOeffnungsStatus: boolean;
 begin
   result := not(self.KassenStatus = ksGeschlossen);
 end;
 
+/// <summary>Funktion zum ermitteln des Rechnungsbetrages</summary>
+/// @return = Gesamtwert der gescannten Ware
 function TKasse.getRechnungsBetrag: double;
 var
   i     : integer;
@@ -131,6 +144,7 @@ begin
   result   := Betrag;
 end;
 
+/// <summary>Prozedur zum Rundenbasierten Einlesen des Warenkorbes</summary>
 procedure TKasse.ScanneWare();
 begin
   if Assigned(self.AktuellerKunde) then
@@ -157,6 +171,7 @@ begin
     self.KassenStatus := ksNaechsterKunde;
 end;
 
+/// <summary>Switch Anweisung um die aktuelle Kassenfunktion aufzurufen</summary>
 procedure TKasse.KassenTimerEvent;
 begin
   case self.KassenStatus of
@@ -177,12 +192,14 @@ begin
   end;
 end;
 
+/// <summary>Prozedur zum öffnen der Kasse und setzen des Kassenstatus</summary>
 procedure TKasse.KasseOeffnen;
 begin
   self.Warteschlange.IstGeoeffnet := true;
   self.KassenStatus               := ksNaechsterKunde;
 end;
 
+/// <summary>Prozedur zum schliessen der Kasse, ist nur dann erfolgreich wenn keine Kunden anstehen</summary>
 procedure TKasse.KasseSchliessen;
 begin
   if self.KundenInSchlange = 0 then
@@ -192,6 +209,8 @@ begin
   end;
 end;
 
+/// <summary>Prozedur zum abkassieren des aktuellen Kunden. Bei Erfolg wird der Status auf
+/// ksKassierenFertig gesetzt und der Rechungsbetrag genullt</summary>
 procedure TKasse.KassiereKunde();
 begin
   if self.Rechnungsbetrag > self.AktuellerKunde.Bargeld then
@@ -206,6 +225,7 @@ begin
   end;
 end;
 
+/// <summary>Prozedur zum Aufrufen des nächsten Kunden aus der Warteschlange</summary>
 procedure TKasse.NaechsterKunde;
 begin
   self.KassenStatus := ksNaechsterKunde;
@@ -221,6 +241,8 @@ end;
 
 { TWarteschlange }
 
+/// <summary>Konstruktor der Klasse TWarteschlange</summary>
+/// @param WarteschlangenNummer = Eindeutige Nummer der Schlange
 constructor TWarteschlange.create(WarteschlangenNummer: integer);
 begin
   self.IstGeoeffnet         := false;
@@ -228,6 +250,8 @@ begin
   self.WarteschlangenNummer := WarteschlangenNummer;
 end;
 
+/// <summary>Timer Event des Warteschlangenobjekts, die Wartezeiten der Kunden
+/// werden so jede Runde erhöht</summary>
 procedure TWarteschlange.EventTimer;
 var
   i: integer;
@@ -273,7 +297,7 @@ constructor TKassenSystem.create(Parameter: TKassenParameter;
 var
   i: integer;
 begin
-  self.LaengsteSchlange := 0;
+  self.LaengsteSchlange    := 0;
   self.WarteschlangenListe := TList<TWarteschlange>.create;
   for i                    := 0 to Parameter.AnzahlKassen - 1 do
     self.WarteschlangenListe.Add(TWarteschlange.create(i));
@@ -375,11 +399,11 @@ end;
 
 procedure TKassenSystem.langsteSchlangeErmitteln;
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to self.WarteschlangenListe.Count - 1 do
-  if self.WarteschlangenListe[i].KundenAnzahl > self.LaengsteSchlange then
-    self.LaengsteSchlange := self.WarteschlangenListe[i].KundenAnzahl;
+    if self.WarteschlangenListe[i].KundenAnzahl > self.LaengsteSchlange then
+      self.LaengsteSchlange := self.WarteschlangenListe[i].KundenAnzahl;
 end;
 
 procedure TKassenSystem.verwalteKassenBedarf;
@@ -394,7 +418,7 @@ procedure TKassenSystem.TimerEvent;
 var
   i: integer;
 begin
-self.langsteSchlangeErmitteln;
+  self.langsteSchlangeErmitteln;
   self.verwalteKassenBedarf;
   for i := 0 to self.KassenListe.Count - 1 do
     self.KassenListe[i].KassenTimerEvent;
